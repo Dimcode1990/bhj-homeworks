@@ -1,39 +1,42 @@
-let score = 0;
-let misses = 0;
-// document.getElementById("dead") = score;      по-идее так должно формироваться значение счётчиков на странице
-// document.getElementById("lost") = misses;    если это добавляю - все вообще перестает работать ПРОШУ ПОМОЩИ!
+let wins = 0;    // счетчик попаданий (убитых кротов)
+let losses = 0;  // счетчик промахов
+
+// элементы счетчиков
+const deadElem = document.getElementById('dead');
+const lostElem = document.getElementById('lost');
+
+// Функция возврата элемента лунки по индексу (1..9)
 function getHole(index) {
-    return document.getElementById('hole' + index);
+  return document.getElementById('hole' + index);
 }
 
-function showMole() {
-    for (let i = 1; i <= 9; i++) {
-        getHole(i).classList.remove('hole_has-mole');
+// Функция сброса игры: обнуление счетчики и вывод alert
+function resetGame() {
+  wins = 0;
+  losses = 0;
+  deadElem.textContent = wins;
+  lostElem.textContent = losses;
+  alert('Игра началась заново!');
+}
+
+// Добавляем обработчики клика для каждой из 9 лунок
+for (let i = 1; i <= 9; i++) {
+  let hole = getHole(i);
+  hole.onclick = function() {
+    if (hole.classList.contains('hole_has-mole')) {
+      wins++;
+      deadElem.textContent = wins;
+      if (wins >= 10) {
+        alert('Поздравляем! Вы выиграли!');
+        resetGame();
+      }
+    } else {
+      losses++; 
+      lostElem.textContent = losses;
+      if (losses >= 5) {
+        alert('Игра окончена! Вы проиграли.');
+        resetGame();
+      }
     }
+  };
 }
-
-
-const holes = document.querySelectorAll('.hole');
-holes.forEach((hole) => {
-    hole.addEventListener('click', () => {
-        if (hole.classList.contains('hole_has-mole')) {
-            // Попадание по кроту
-            score++;
-
-            if (score === 10) {
-                alert('Победа! Вы набрали 10 очков.');
-                score = 0;
-                misses = 0;
-            }
-        } else {
-            // Промах
-            misses++;
-            if (misses === 5) {
-                alert('Игра окончена! Вы проиграли.');
-                score = 0;
-                misses = 0;
-            }
-        }
-        showMole();
-    });
-});
